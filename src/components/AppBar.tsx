@@ -34,7 +34,7 @@ function UserNameMenu() {
 const AppBar = () => {
   return (
     <div
-      className="flex items-center drop-shadow-md h-20 bg-[#FFFFFF] p-6"
+      className="flex items-center drop-shadow-md h-20 bg-[#FFFFFF] text-black p-6 w-[100%]"
       style={{ justifyContent: 'space-between' }}
     >
       <p className="font-bold">AI/ML Model Builder</p>
