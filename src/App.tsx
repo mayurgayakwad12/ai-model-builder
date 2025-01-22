@@ -1,7 +1,9 @@
+import AppBar from './components/AppBar';
+
 function App() {
   return (
     <>
-      <h1>AI Model Builder</h1>
+      <AppBar />
     </>
   );
 }
