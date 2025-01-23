@@ -36,7 +36,7 @@ type EnhancedTableToolbarProps = {
 const getRandomTimestamp = (start: Date, end: Date): string => {
   const randomTime = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
   const day = String(randomTime.getDate()).padStart(2, '0');
-  const month = String(randomTime.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+  const month = String(randomTime.getMonth() + 1).padStart(2, '0');
   const year = randomTime.getFullYear();
   return `${day}/${month}/${year}`; // Returns in DD/MM/YYYY format
 };
@@ -229,13 +229,13 @@ export default function CustomTable() {
   const [searchQuery, setSearchQuery] = React.useState<string>('');
   const rowsPerPage = 7;
 
-  const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof SortableData) => {
+  const handleRequestSort = (_event: React.MouseEvent<unknown>, property: keyof SortableData) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
+  const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
   };
 

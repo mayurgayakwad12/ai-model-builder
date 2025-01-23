@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 import { Avatar, Badge, Box, Divider } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
