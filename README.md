@@ -1,50 +1,63 @@
-# React + TypeScript + Vite
+# Welcome to AI Model Builder
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is a React-based web application created with **Vite** for fast development. It includes a dynamic table built with **Material-UI**, featuring sorting, filtering, pagination, and a sidebar navigation menu. The application is fully written in **TypeScript** for enhanced type safety and developer experience.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 **Features** 
 
-## Expanding the ESLint configuration
+- **Dynamic Table**:
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+  - Sorting (ascending/descending) on columns.
+  - Filtering by search query.
+  - Pagination with adjustable rows per page.
 
-- Configure the top-level `parserOptions` property like this:
+- **Navigation Sidebar**:
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+  - Dynamically renders navigation items from a configuration.
+  - Highlights active navigation items.
+  - Supports headers and nested items.
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+- **Reusability**:
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+  - Fully typed and modular components (e.g., Navigation Tree, Table Toolbar).
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+- **Vite**:
+  - Lightning-fast development and optimized build system.
+
+---
+
+## **Technologies Used**
+
+- **React** (v18+)
+- **Material-UI (MUI)**:
+  - Provides modern and accessible UI components.
+- **TypeScript**:
+  - Adds type safety and improved IDE support.
+- **Tailwind CSS**:
+  - Utility-first CSS framework for custom styling.
+- **Vite**:
+  - Fast development server and production build system.
+
+---
+
+## ✨ Demo
+
+<iframe
+  src="https://drive.google.com/file/d/1kSd2qtk1hxBi_3nLLGk22KZlRAiF0IAT/preview"
+  width="640"
+  height="360"
+  allow="autoplay"
+></iframe>
+
+## Deployment
+
+The project has been deployed and can be accessed at the following URL:
+
+[Deployed Project URL](https://ai-model-builder-ui.vercel.app/)
+
+## 🤝 Contact
+
+Mayur Gayakwad - [mayurgayakwad12@gmail.com](mayurgayakwad12@gmail.com)
+
+[Visit Portfolio](https://mayurgayakwad.vercel.app/)
