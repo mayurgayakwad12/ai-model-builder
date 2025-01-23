@@ -1,40 +1,38 @@
 import * as React from 'react';
-import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
-import Checkbox from '@mui/material/Checkbox';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
-import DeleteIcon from '@mui/icons-material/Delete';
-import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 import SearchComponent from './BaseSearch';
 import MoreVertOutlinedIcon from '@mui/icons-material/MoreVertOutlined';
+import TuneOutlinedIcon from '@mui/icons-material/TuneOutlined';
 import { PaginationComponent } from './Pagination';
 import CustomizedDialogs from './Modal';
+import { Button } from '@mui/material';
 
 interface Data {
-  id: number;
+  id: string;
   modelType: string;
   description: string;
   status: string;
   modelName: string;
   createdOn: string;
   lastTrainedOn: string;
-  action: string;
+  action?: string;
 }
+
+type SortableData = Omit<Data, 'action'>;
+type EnhancedTableToolbarProps = {
+  setSearchQuery: (query: string) => void;
+};
 const getRandomTimestamp = (start: Date, end: Date): string => {
   const randomTime = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
   const day = String(randomTime.getDate()).padStart(2, '0');
@@ -44,7 +42,7 @@ const getRandomTimestamp = (start: Date, end: Date): string => {
 };
 
 const rows = Array.from({ length: 49 }, (_, i) => ({
-  id: Math.floor(1000000 + Math.random() * 9000000),
+  id: `${Math.floor(1000000 + Math.random() * 9000000)}`,
   modelName: `Model ${i + 1}`,
   modelType: i % 2 === 0 ? 'LLM' : 'Neural',
   description: `Description of Model ${i + 1}`,
@@ -53,11 +51,11 @@ const rows = Array.from({ length: 49 }, (_, i) => ({
   status: i % 2 === 0 ? 'Active' : 'Inactive',
 }));
 
-function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-  if (b[orderBy] < a[orderBy]) {
+function descendingComparator<Key extends keyof SortableData>(a: Data, b: Data, orderBy: Key): number {
+  if (a[orderBy] < b[orderBy]) {
     return -1;
   }
-  if (b[orderBy] > a[orderBy]) {
+  if (a[orderBy] > b[orderBy]) {
     return 1;
   }
   return 0;
@@ -65,10 +63,10 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
 
 type Order = 'asc' | 'desc';
 
-function getComparator<Key extends keyof any>(
+function getComparator<Key extends keyof SortableData>(
   order: Order,
   orderBy: Key
-): (a: { [key in Key]: number | string }, b: { [key in Key]: number | string }) => number {
+): (a: Data, b: Data) => number {
   return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
@@ -79,6 +77,7 @@ interface HeadCell {
   id: keyof Data;
   label: string;
   numeric: boolean;
+  disableSort?: boolean;
 }
 
 const headCells: readonly HeadCell[] = [
@@ -123,11 +122,12 @@ const headCells: readonly HeadCell[] = [
     numeric: false,
     disablePadding: false,
     label: 'Action',
+    disableSort: true,
   },
 ];
 
 interface EnhancedTableProps {
-  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Data) => void;
+  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof SortableData) => void;
   order: Order;
   orderBy: string;
   rowCount: number;
@@ -135,9 +135,10 @@ interface EnhancedTableProps {
 
 function EnhancedTableHead(props: EnhancedTableProps) {
   const { order, orderBy, onRequestSort } = props;
-  const createSortHandler = (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
-    onRequestSort(event, property);
-  };
+  const createSortHandler =
+    (property: keyof SortableData) => (event: React.MouseEvent<unknown>) => {
+      onRequestSort(event, property);
+    };
 
   return (
     <TableHead>
@@ -150,10 +151,13 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             sortDirection={orderBy === headCell.id ? order : false}
           >
             <TableSortLabel
-              active={orderBy === headCell.id}
+              active={headCell?.disableSort ? false : orderBy === headCell.id}
               direction={orderBy === headCell.id ? order : 'asc'}
-              onClick={createSortHandler(headCell.id)}
+              onClick={(() => {
+                if (!headCell?.disableSort && headCell.id !== 'action') return createSortHandler(headCell.id);
+              })()}
               sx={{ fontWeight: 800 }}
+              hideSortIcon={headCell?.disableSort}
             >
               {headCell.label}
               {orderBy === headCell.id ? (
@@ -169,7 +173,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   );
 }
 
-function EnhancedTableToolbar() {
+function EnhancedTableToolbar({ setSearchQuery }: EnhancedTableToolbarProps) {
   return (
     <>
       <Toolbar sx={{ display: 'flex' }}>
@@ -183,17 +187,30 @@ function EnhancedTableToolbar() {
         </Typography>
         <CustomizedDialogs />
       </Toolbar>
-      <Toolbar>
+      <Toolbar sx={{ display: 'flex', gap: 2 }}>
         <div className="w-[60%]">
-          <SearchComponent placeholder="Search By Name, ID" />
+          <SearchComponent placeholder="Search By Name, ID" onChange={setSearchQuery} />
         </div>
+        <Button
+          variant="contained"
+          sx={{
+            backgroundColor: '#EFEFEF',
+            textTransform: 'none',
+            color: '#767676',
+            boxShadow: 'none',
+          }}
+          disableElevation
+          startIcon={<TuneOutlinedIcon />}
+        >
+          Filter
+        </Button>
       </Toolbar>
     </>
   );
 }
 interface ModalNameRenderProps {
   name: string;
-  id: number;
+  id: number | string;
 }
 
 const ModalNameRender = ({ name, id }: ModalNameRenderProps) => {
@@ -207,36 +224,43 @@ const ModalNameRender = ({ name, id }: ModalNameRenderProps) => {
 
 export default function CustomTable() {
   const [order, setOrder] = React.useState<Order>('asc');
-  const [orderBy, setOrderBy] = React.useState<keyof Data>('modelName');
+  const [orderBy, setOrderBy] = React.useState<keyof SortableData>('modelName');
   const [page, setPage] = React.useState(1);
+  const [searchQuery, setSearchQuery] = React.useState<string>('');
   const rowsPerPage = 7;
 
-  const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data) => {
+  const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof SortableData) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
-    console.log({ newPage });
     setPage(newPage);
   };
 
   const emptyRows =
     page === Math.ceil(rows.length / rowsPerPage) ? rowsPerPage - (rows.length % rowsPerPage) : 0;
 
-  console.log({ emptyRows, page });
-
   const visibleRows = React.useMemo(() => {
-    return rows
-      .slice((page - 1) * rowsPerPage, page * rowsPerPage)
-      .sort(getComparator(order, orderBy));
-  }, [order, orderBy, page, rows, rowsPerPage]);
+    const filteredRows = rows.filter((val) => {
+      const query = searchQuery.trim().toLowerCase();
+      return (
+        query === '' ||
+        val.modelName.toLowerCase().includes(query) ||
+        val.id.toLowerCase().includes(query)
+      );
+    });
+
+    const sortedRows = filteredRows.sort(getComparator(order, orderBy));
+
+    return sortedRows.slice((page - 1) * rowsPerPage, page * rowsPerPage);
+  }, [order, orderBy, page, rowsPerPage, searchQuery]);
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar />
+      <Paper sx={{ width: '100%', mt: 1 }}>
+        <EnhancedTableToolbar setSearchQuery={(value: string) => setSearchQuery(value)} />
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size="medium">
             <EnhancedTableHead
@@ -248,7 +272,7 @@ export default function CustomTable() {
             <TableBody>
               {visibleRows.map((row, index) => {
                 const labelId = `enhanced-table-checkbox-${index}`;
-                const statusBg = row.status === 'Active53' ? '#DCFCE7' : '#fcdcdc';
+                const statusBg = row.status === 'Active' ? '#DCFCE7' : '#fcdcdc';
                 const statusColor = row.status === 'Active' ? '#16A34A' : '#a31616';
                 return (
                   <TableRow

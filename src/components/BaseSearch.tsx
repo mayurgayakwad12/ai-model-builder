@@ -4,6 +4,11 @@ import Box from '@mui/material/Box';
 import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
 
+type SearchComponentProps = {
+  placeholder?: string | undefined;
+  onChange?: (value: string) => void;
+};
+
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
@@ -31,14 +36,23 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function SearchComponent({ placeholder = 'Search…' }) {
+export default function SearchComponent({
+  placeholder = 'Search…',
+  onChange,
+}: SearchComponentProps) {
   return (
     <Box>
       <Search>
         <SearchIconWrapper>
           <SearchIcon />
         </SearchIconWrapper>
-        <StyledInputBase placeholder={placeholder} inputProps={{ 'aria-label': 'search' }} />
+        <StyledInputBase
+          placeholder={placeholder}
+          inputProps={{ 'aria-label': 'search' }}
+          onChange={(e) => {
+            if (onChange) onChange(e.target.value);
+          }}
+        />
       </Search>
     </Box>
   );

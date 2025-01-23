@@ -9,21 +9,70 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
+import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined';
 import AppBar from './AppBar';
 import Logo from '../assets/Aventisia V1.png';
 import CustomTable from './Table';
+import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
+import LayersOutlinedIcon from '@mui/icons-material/LayersOutlined';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
+import NavigationTree from './NavigationSideBar';
+import navigationType from '../typesConstant';
 
-const drawerWidth = 240;
+const drawerWidth = 264;
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
 }
+
+const NAVIGATION: navigationType[] = [
+  {
+    kind: 'header',
+    title: 'Model Library',
+  },
+  {
+    segment: 'modelLibrary',
+    title: 'Model Library',
+    icon: <GridViewOutlinedIcon />,
+    active: true,
+  },
+  { segment: 'divider' },
+  {
+    kind: 'header',
+    title: 'Extraction Builder',
+  },
+  {
+    segment: 'lableData',
+    title: 'Label Data',
+    icon: <GridViewOutlinedIcon />,
+  },
+  {
+    segment: 'model',
+    title: 'Model',
+    icon: <LayersOutlinedIcon />,
+  },
+  {
+    segment: 'test',
+    title: 'Test',
+    icon: <AssignmentOutlinedIcon />,
+  },
+  { segment: 'divider' },
+  {
+    kind: 'header',
+    title: 'Help',
+  },
+  {
+    segment: 'setting',
+    title: 'Setting',
+    icon: <SettingsOutlinedIcon />,
+  },
+  {
+    segment: 'support',
+    title: 'Support',
+    icon: <ManageAccountsOutlinedIcon />,
+  },
+];
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
   open?: boolean;
@@ -49,7 +98,7 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
   ],
 }));
 
-const AppBar2 = styled(MuiAppBar, {
+const AppBarStyle = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
 })<AppBarProps>(({ theme }) => ({
   transition: theme.transitions.create(['margin', 'width'], {
@@ -81,7 +130,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 export default function SideBar() {
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -93,19 +142,19 @@ export default function SideBar() {
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <AppBar2 position="fixed" open={open} sx={{ backgroundColor: '#FFFFFF' }} elevation={0}>
+      <AppBarStyle position="fixed" open={open} sx={{ backgroundColor: '#FFFFFF' }} elevation={0}>
         <Toolbar disableGutters>
           <IconButton
             aria-label="open drawer"
             onClick={handleDrawerOpen}
             edge="start"
-            sx={[open && { display: 'none' }]}
+            sx={[open ? { display: 'none' } : { padding: 0 }]}
           >
-            <ChevronRightIcon />
+            <ChevronRightIcon fontSize="large" />
           </IconButton>
           <AppBar />
         </Toolbar>
-      </AppBar2>
+      </AppBarStyle>
       <Drawer
         sx={{
           width: drawerWidth,
@@ -119,38 +168,32 @@ export default function SideBar() {
         anchor="left"
         open={open}
       >
-        <DrawerHeader sx={{ height: '80px' }}>
-          <img src={Logo} alt="logo" width="200px" />
-          <IconButton sx={{ left: '24px' }} onClick={handleDrawerClose}>
-            {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+        <DrawerHeader
+          sx={{
+            height: '80px',
+            padding: '0',
+            minHeight: '80px',
+            justifyContent: 'space-between',
+            backgroundColor: '#F8FAFC',
+          }}
+        >
+          <img src={Logo} alt="logo" width="225px" />
+
+          <IconButton sx={{ padding: 0 }} onClick={handleDrawerClose}>
+            {theme.direction === 'ltr' ? (
+              <ChevronLeftIcon fontSize="large" />
+            ) : (
+              <ChevronRightIcon fontSize="large" />
+            )}
           </IconButton>
         </DrawerHeader>
         <Divider />
-        <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
+        <List sx={{ padding: '12px' }}>
+          <NavigationTree navigation={NAVIGATION} />
         </List>
       </Drawer>
       <Main open={open}>
         <DrawerHeader />
-
         <CustomTable />
       </Main>
     </Box>
