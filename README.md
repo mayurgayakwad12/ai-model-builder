@@ -43,12 +43,7 @@ This project is a React-based web application created with **Vite** for fast dev
 
 ## ✨ Demo
 
-<iframe
-  src="https://drive.google.com/file/d/1kSd2qtk1hxBi_3nLLGk22KZlRAiF0IAT/preview"
-  width="640"
-  height="360"
-  allow="autoplay"
-></iframe>
+[Watch the video](https://drive.google.com/file/d/1kSd2qtk1hxBi_3nLLGk22KZlRAiF0IAT/preview)
 
 ## Deployment
 
